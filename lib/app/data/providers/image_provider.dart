@@ -9,7 +9,7 @@ class ImageProvider extends GetConnect {
       if (map is Map<String, dynamic>) return Image.fromJson(map);
       if (map is List) return map.map((item) => Image.fromJson(item)).toList();
     };
-    httpClient.baseUrl = 'YOUR-API-URL';
+    httpClient.baseUrl = 'https://api.leviathanbolu.my.id/api';
   }
 
   Future<Image?> getImage(int id) async {
