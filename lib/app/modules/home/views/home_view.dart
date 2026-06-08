@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:iot_drainage/widgets/height_card.dart';
 import 'package:iot_drainage/widgets/image_card.dart';
-import 'package:iot_drainage/widgets/power_indicator.dart';
 import 'package:iot_drainage/widgets/status_card.dart';
 import 'package:iot_drainage/widgets/weather_card.dart';
 
@@ -15,17 +13,37 @@ class HomeView extends GetView<HomeController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        width: double.infinity,
-        height: double.infinity,
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [Color(0xFFE6ECFF), Color(0xFFFEFFF4)],
-          ),
-        ),
-        child: CustomScrollView(
+      body: Obx(() {
+        final isNormal = controller.sensorStatus.value == 'NORMAL' ||
+            controller.sensorStatus.value == null;
+        final primaryColor =
+            isNormal ? const Color(0xFF47B881) : const Color(0xFFF64C4C);
+        return Stack(
+          children: [
+            Container(
+              width: double.infinity,
+              height: double.infinity,
+              decoration: BoxDecoration(
+                gradient: RadialGradient(
+                  center: const Alignment(0, -1),
+                  radius: 1.1,
+                  colors: [primaryColor, const Color(0xFFFBFEFC)],
+                  stops: const [0.1, 1.0],
+                ),
+              ),
+            ),
+            Positioned(
+              top: 0,
+              left: 0,
+              right: 0,
+              child: Image.asset(
+                isNormal
+                    ? 'assets/images/health_green.png'
+                    : 'assets/images/health_red.png',
+                fit: BoxFit.fitWidth,
+              ),
+            ),
+            CustomScrollView(
           slivers: [
             SliverToBoxAdapter(
               child: Padding(
@@ -33,23 +51,12 @@ class HomeView extends GetView<HomeController> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      'Kondisi Terkini',
-                      style: GoogleFonts.inter(
-                        fontWeight: FontWeight.w500,
-                        fontSize: 36,
-                        color: const Color(0xFF333333),
-                      ),
-                    ),
-                    const SizedBox(height: 48),
                     Row(
                       children: const [
                         Expanded(child: StatusCard()),
-                        SizedBox(width: 6),
-                        PowerIndicator(),
                       ],
                     ),
-                    const SizedBox(height: 6),
+                    const SizedBox(height: 12),
                     SizedBox(
                       height: 198,
                       child: Row(
@@ -60,29 +67,25 @@ class HomeView extends GetView<HomeController> {
                         ],
                       ),
                     ),
-                    const SizedBox(height: 6),
+                    const SizedBox(height: 12),
+                    SizedBox(
+                      height: 348,
+                      child: Obx(
+                        () => ImageCard(
+                          imageUrl: controller.imageUrl.value,
+                          timestamp: controller.imageTimestamp.value,
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ),
             ),
-            SliverPadding(
-              padding: const EdgeInsets.only(left: 19, right: 19, bottom: 32),
-              sliver: SliverList.builder(
-                itemCount: 1,
-                itemBuilder: (context, index) => Padding(
-                  padding: const EdgeInsets.only(bottom: 10),
-                  child: SizedBox(
-                    height: 238,
-                    child: ImageCard(
-                      imagePath: "assets/images/sample_river.jpg",
-                    ),
-                  ),
-                ),
-              ),
-            ),
           ],
-        ),
-      ),
+          ),
+          ],
+        );
+      }),
     );
   }
 }

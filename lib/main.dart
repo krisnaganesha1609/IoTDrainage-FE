@@ -12,6 +12,7 @@ void main() async {
   await Get.putAsync(() => FcmService().init());
   runApp(
     GetMaterialApp(
+      debugShowCheckedModeBanner: false,
       title: "IoTDrainage",
       initialRoute: AppPages.INITIAL,
       getPages: AppPages.routes,

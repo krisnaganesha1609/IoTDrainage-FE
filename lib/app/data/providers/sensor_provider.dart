@@ -5,12 +5,6 @@ import '../models/sensor_model.dart';
 class SensorProvider extends GetConnect {
   @override
   void onInit() {
-    httpClient.defaultDecoder = (map) {
-      if (map is Map<String, dynamic>) return SensorModel.fromJson(map);
-      if (map is List) {
-        return map.map((item) => SensorModel.fromJson(item)).toList();
-      }
-    };
     httpClient.baseUrl = 'https://api.leviathanbolu.my.id/api';
   }
 

@@ -5,18 +5,18 @@ import '../models/image_model.dart';
 class ImageProvider extends GetConnect {
   @override
   void onInit() {
-    httpClient.defaultDecoder = (map) {
-      if (map is Map<String, dynamic>) return Image.fromJson(map);
-      if (map is List) return map.map((item) => Image.fromJson(item)).toList();
-    };
     httpClient.baseUrl = 'https://api.leviathanbolu.my.id/api';
   }
 
-  Future<Image?> getImage(int id) async {
-    final response = await get('image/$id');
-    return response.body;
+  Future<ImageModel?> getImage() async {
+    final response = await get('/image');
+    if (response.body is Map<String, dynamic>) {
+      final data = response.body['data'];
+      if (data is Map<String, dynamic>) return ImageModel.fromJson(data);
+    }
+    return null;
   }
 
-  Future<Response<Image>> postImage(Image image) async => await post('image', image);
+  Future<Response> postImage(ImageModel image) async => await post('image', image.toJson());
   Future<Response> deleteImage(int id) async => await delete('image/$id');
 }

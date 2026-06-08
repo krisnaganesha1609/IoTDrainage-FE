@@ -7,34 +7,56 @@ class StatusCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.only(top: 19, left: 21, right: 41, bottom: 19),
+      padding: const EdgeInsets.only(top: 19, left: 21, right: 21, bottom: 24),
       decoration: BoxDecoration(
         gradient: const LinearGradient(
-          colors: [Color(0xFF1841D9), Color(0xFF0228B8)],
-          begin: Alignment.topRight,
-          end: Alignment.bottomLeft,
+          colors: [Colors.white70, Color(0xFFFFFFFF)],
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
         ),
         borderRadius: BorderRadius.circular(40),
+        border: Border.all(color: const Color(0xFFEEEEEE), width: 1),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            'Aman',
-            style: GoogleFonts.inter(
-              fontSize: 45,
-              fontWeight: FontWeight.w500,
-              color: Colors.white,
-            ),
+          Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Kondisi Aman',
+                      style: GoogleFonts.inter(
+                        fontSize: 28,
+                        fontWeight: FontWeight.w500,
+                        color: Color(0xFF0C9D61),
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      'Diperbarui 5 Juni 2026, 14.30',
+                      style: GoogleFonts.inter(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                        color: Color(0xFF8E8E8E),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Image.asset('assets/images/logo_pondokdiaz.png'),
+            ],
           ),
-          const SizedBox(height: 4),
+          SizedBox(height: 14),
           Text(
-            'Tidak ada peningkatan air yang signifikan',
+            'Ketinggian air masih dalam batas normal dan belum menunjukkan potensi risiko',
             style: GoogleFonts.inter(
               fontSize: 14,
               fontWeight: FontWeight.w400,
-              color: Colors.white,
+              color: Colors.black,
             ),
           ),
         ],
