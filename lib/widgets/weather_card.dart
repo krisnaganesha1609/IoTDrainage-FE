@@ -37,16 +37,16 @@ class WeatherCard extends StatelessWidget {
               Container(
                 width: 44,
                 height: 44,
-                decoration: const BoxDecoration(
-                  color: Color(0xFFDEF2FF),
+                decoration: BoxDecoration(
                   shape: BoxShape.circle,
+                  border: Border.all(color: Color(0xFFEEEEEE)),
                 ),
                 child: Center(
                   child: Image.asset(
                     'assets/images/symbol_rain.png',
                     width: 24,
                     height: 24,
-                    color: const Color(0xFF3B82F6),
+                    color: const Color(0xFF0A8AE2),
                   ),
                 ),
               ),

@@ -10,80 +10,120 @@ import '../controllers/home_controller.dart';
 
 class HomeView extends GetView<HomeController> {
   const HomeView({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Obx(() {
         final isNormal = controller.sensorStatus.value == 'NORMAL' ||
             controller.sensorStatus.value == null;
-        final primaryColor =
+        final targetColor =
             isNormal ? const Color(0xFF47B881) : const Color(0xFFF64C4C);
-        return Stack(
-          children: [
-            Container(
-              width: double.infinity,
-              height: double.infinity,
-              decoration: BoxDecoration(
-                gradient: RadialGradient(
-                  center: const Alignment(0, -1),
-                  radius: 1.1,
-                  colors: [primaryColor, const Color(0xFFFBFEFC)],
-                  stops: const [0.1, 1.0],
-                ),
-              ),
-            ),
-            Positioned(
-              top: 0,
-              left: 0,
-              right: 0,
-              child: Image.asset(
-                isNormal
-                    ? 'assets/images/health_green.png'
-                    : 'assets/images/health_red.png',
-                fit: BoxFit.fitWidth,
-              ),
-            ),
-            CustomScrollView(
-          slivers: [
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.only(top: 67, left: 19, right: 19),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: const [
-                        Expanded(child: StatusCard()),
-                      ],
-                    ),
-                    const SizedBox(height: 12),
-                    SizedBox(
-                      height: 198,
-                      child: Row(
-                        children: const [
-                          Expanded(child: HeightCard(heightCm: 30)),
-                          SizedBox(width: 6),
-                          Expanded(child: WeatherCard()),
+
+        return TweenAnimationBuilder<Color?>(
+          tween: ColorTween(end: targetColor),
+          duration: const Duration(milliseconds: 800),
+          curve: Curves.easeInOut,
+          child: CustomScrollView(
+            slivers: [
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding:
+                      const EdgeInsets.only(top: 67, left: 19, right: 19),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Obx(() => StatusCard(
+                                  status: controller.sensorStatus.value,
+                                  timestamp: controller.sensorTimestamp.value,
+                                )),
+                          ),
                         ],
                       ),
-                    ),
-                    const SizedBox(height: 12),
-                    SizedBox(
-                      height: 348,
-                      child: Obx(
-                        () => ImageCard(
-                          imageUrl: controller.imageUrl.value,
-                          timestamp: controller.imageTimestamp.value,
+                      const SizedBox(height: 12),
+                      SizedBox(
+                        height: 198,
+                        child: Row(
+                          children: const [
+                            Expanded(child: HeightCard(heightCm: 30)),
+                            SizedBox(width: 6),
+                            Expanded(child: WeatherCard()),
+                          ],
                         ),
                       ),
-                    ),
-                  ],
+                      const SizedBox(height: 12),
+                      SizedBox(
+                        height: 348,
+                        child: Obx(
+                          () => ImageCard(
+                            imageUrl: controller.imageUrl.value,
+                            timestamp: controller.imageTimestamp.value,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
           ),
-          ],
+          builder: (context, color, child) {
+            return Stack(
+              children: [
+                Container(
+                  width: double.infinity,
+                  height: double.infinity,
+                  decoration: BoxDecoration(
+                    gradient: RadialGradient(
+                      center: const Alignment(0, -1),
+                      radius: 1.1,
+                      colors: [
+                        color ?? targetColor,
+                        const Color(0xFFFBFEFC),
+                      ],
+                      stops: const [0.1, 1.0],
+                    ),
+                  ),
+                ),
+                Positioned(
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  child: AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 600),
+                    switchInCurve: Curves.easeOut,
+                    switchOutCurve: Curves.easeIn,
+                    layoutBuilder: (currentChild, previousChildren) => Stack(
+                      fit: StackFit.passthrough,
+                      children: [
+                        ...previousChildren,
+                        ?currentChild,
+                      ],
+                    ),
+                    transitionBuilder: (child, animation) => FadeTransition(
+                      opacity: animation,
+                      child: ScaleTransition(
+                        scale: Tween<double>(begin: 1.04, end: 1.0)
+                            .animate(animation),
+                        child: child,
+                      ),
+                    ),
+                    child: Image.asset(
+                      isNormal
+                          ? 'assets/images/health_green.png'
+                          : 'assets/images/health_red.png',
+                      key: ValueKey(isNormal),
+                      fit: BoxFit.fitWidth,
+                    ),
+                  ),
+                ),
+                child!,
+              ],
+            );
+          },
         );
       }),
     );

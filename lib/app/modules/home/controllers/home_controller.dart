@@ -1,27 +1,37 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 
+import '../../../data/models/sensor_model.dart';
 import '../../../data/providers/image_provider.dart';
+import '../../../data/providers/sensor_provider.dart';
 import '../../../services/websocket_service.dart';
 
 class HomeController extends GetxController {
   final _imageProvider = Get.find<ImageProvider>();
+  final _sensorProvider = Get.find<SensorProvider>();
   final _wsService = Get.find<WebSocketService>();
+
+  static const _deviceId = 'IOT-34CD98';
 
   final imageUrl = RxnString();
   final imageTimestamp = RxnString();
   final sensorStatus = RxnString();
+  final sensorTimestamp = RxnString();
+  final waterLevelCm = Rxn<num>();
+  final rainDetected = RxnBool();
+  final sensor = Rxn<SensorModel>();
 
   StreamSubscription? _wsSub;
 
   @override
   void onInit() {
     super.onInit();
+    fetchSensor();
     fetchImage();
-    _wsSub = _wsService.stream.listen((data) {
-      sensorStatus.value = data['status'] as String?;
-      fetchImage();
+    _wsSub = _wsService.stream.listen((_) {
+      fetchSensor();
     });
   }
 
@@ -31,10 +41,59 @@ class HomeController extends GetxController {
     super.onClose();
   }
 
+  Future<void> fetchSensor() async {
+    try {
+      final list = await _sensorProvider.getLatest(_deviceId);
+      if (list != null && list.isNotEmpty) {
+        final latest = list.reduce(
+          (a, b) =>
+              DateTime.parse(a.timestamp!).isAfter(DateTime.parse(b.timestamp!))
+              ? a
+              : b,
+        );
+        sensor.value = latest;
+        sensorStatus.value = latest.status;
+        sensorTimestamp.value = _formatIsoTimestamp(latest.timestamp);
+        waterLevelCm.value = latest.waterLevelCm;
+        rainDetected.value = latest.rainDetected;
+        await fetchImage();
+      }
+    } catch (e) {
+      debugPrint('fetchSensor error: $e');
+    }
+  }
+
   Future<void> fetchImage() async {
-    final image = await _imageProvider.getImage();
-    imageUrl.value = image?.url;
-    imageTimestamp.value = _formatTimestamp(image?.lastUpdated);
+    try {
+      final image = await _imageProvider.getImage();
+      imageUrl.value = image?.url;
+      imageTimestamp.value = _formatTimestamp(image?.lastUpdated);
+    } catch (e) {
+      debugPrint('fetchImage error: $e');
+    }
+  }
+
+  String? _formatIsoTimestamp(String? iso) {
+    if (iso == null) return null;
+    final dt = DateTime.parse(iso).toLocal();
+    const months = [
+      '',
+      'Januari',
+      'Februari',
+      'Maret',
+      'April',
+      'Mei',
+      'Juni',
+      'Juli',
+      'Agustus',
+      'September',
+      'Oktober',
+      'November',
+      'Desember',
+    ];
+    final hour = dt.hour.toString().padLeft(2, '0');
+    final minute = dt.minute.toString().padLeft(2, '0');
+    return 'Diperbarui ${dt.day} ${months[dt.month]} ${dt.year}, $hour.$minute';
   }
 
   String? _formatTimestamp(num? timestamp) {
@@ -42,8 +101,19 @@ class HomeController extends GetxController {
     final ms = timestamp > 1e10 ? timestamp.toInt() : timestamp.toInt() * 1000;
     final dt = DateTime.fromMillisecondsSinceEpoch(ms, isUtc: true).toLocal();
     const months = [
-      '', 'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
-      'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember',
+      '',
+      'Januari',
+      'Februari',
+      'Maret',
+      'April',
+      'Mei',
+      'Juni',
+      'Juli',
+      'Agustus',
+      'September',
+      'Oktober',
+      'November',
+      'Desember',
     ];
     final hour = dt.hour.toString().padLeft(2, '0');
     final minute = dt.minute.toString().padLeft(2, '0');

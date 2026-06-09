@@ -2,7 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class StatusCard extends StatelessWidget {
-  const StatusCard({super.key});
+  final String? status;
+  final String? timestamp;
+
+  const StatusCard({super.key, this.status, this.timestamp});
+
+  bool get _isNormal => status == null || status == 'NORMAL';
 
   @override
   Widget build(BuildContext context) {
@@ -28,20 +33,22 @@ class StatusCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Kondisi Aman',
+                      _isNormal ? 'Kondisi Aman' : 'Perlu Perhatian',
                       style: GoogleFonts.inter(
                         fontSize: 28,
                         fontWeight: FontWeight.w500,
-                        color: Color(0xFF0C9D61),
+                        color: _isNormal
+                            ? const Color(0xFF0C9D61)
+                            : const Color(0xFFEC2D30),
                       ),
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      'Diperbarui 5 Juni 2026, 14.30',
+                      timestamp ?? '',
                       style: GoogleFonts.inter(
                         fontSize: 12,
                         fontWeight: FontWeight.w500,
-                        color: Color(0xFF8E8E8E),
+                        color: const Color(0xFF8E8E8E),
                       ),
                     ),
                   ],
@@ -50,9 +57,11 @@ class StatusCard extends StatelessWidget {
               Image.asset('assets/images/logo_pondokdiaz.png'),
             ],
           ),
-          SizedBox(height: 14),
+          const SizedBox(height: 14),
           Text(
-            'Ketinggian air masih dalam batas normal dan belum menunjukkan potensi risiko',
+            _isNormal
+                ? 'Ketinggian air masih dalam batas normal dan belum menunjukkan potensi risiko'
+                : 'Ketinggian air meningkat, harap pantau kondisi di sekitar secara berkala',
             style: GoogleFonts.inter(
               fontSize: 14,
               fontWeight: FontWeight.w400,

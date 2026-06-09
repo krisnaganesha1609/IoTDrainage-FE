@@ -42,16 +42,16 @@ class HeightCard extends StatelessWidget {
                 margin: EdgeInsets.only(left: 32),
                 width: 44,
                 height: 44,
-                decoration: const BoxDecoration(
-                  color: Color(0xFFD2E1FF),
+                decoration: BoxDecoration(
                   shape: BoxShape.circle,
+                  border: Border.all(color: Color(0xFFEEEEEE)),
                 ),
                 child: Center(
                   child: Image.asset(
                     'assets/images/symbol_water.png',
                     width: 24,
                     height: 24,
-                    color: const Color(0xFF3B82F6),
+                    color: const Color(0xFF1841D9),
                   ),
                 ),
               ),

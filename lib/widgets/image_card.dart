@@ -15,18 +15,38 @@ class ImageCard extends StatelessWidget {
       child: Stack(
         fit: StackFit.expand,
         children: [
-          _buildImage(),
+          AnimatedSwitcher(
+            duration: const Duration(milliseconds: 600),
+            switchInCurve: Curves.easeOut,
+            switchOutCurve: Curves.easeIn,
+            layoutBuilder: (currentChild, previousChildren) => Stack(
+              fit: StackFit.expand,
+              children: [
+                ...previousChildren,
+                ?currentChild,
+              ],
+            ),
+            transitionBuilder: (child, animation) => FadeTransition(
+              opacity: animation,
+              child: child,
+            ),
+            child: _buildImage(),
+          ),
           Positioned(
             top: 12,
             left: 0,
             right: 0,
             child: Center(
-              child: Text(
-                timestamp ?? '',
-                style: GoogleFonts.inter(
-                  color: Colors.white,
-                  fontSize: 12,
-                  fontWeight: FontWeight.w500,
+              child: AnimatedSwitcher(
+                duration: const Duration(milliseconds: 400),
+                child: Text(
+                  timestamp ?? '',
+                  key: ValueKey(timestamp),
+                  style: GoogleFonts.inter(
+                    color: Colors.white,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
               ),
             ),
@@ -59,16 +79,37 @@ class ImageCard extends StatelessWidget {
 
   Widget _buildImage() {
     if (imageUrl == null || imageUrl!.isEmpty) {
-      return Container(color: Colors.grey.shade300);
+      return Container(
+        key: const ValueKey('placeholder'),
+        color: Colors.grey.shade300,
+      );
     }
     return Image.network(
       imageUrl!,
+      key: ValueKey(imageUrl),
       fit: BoxFit.cover,
+      frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
+        if (wasSynchronouslyLoaded || frame != null) {
+          return AnimatedOpacity(
+            opacity: 1.0,
+            duration: const Duration(milliseconds: 400),
+            curve: Curves.easeOut,
+            child: child,
+          );
+        }
+        return AnimatedOpacity(
+          opacity: frame == null ? 0.0 : 1.0,
+          duration: const Duration(milliseconds: 400),
+          curve: Curves.easeOut,
+          child: child,
+        );
+      },
       loadingBuilder: (_, child, progress) {
         if (progress == null) return child;
         return Container(color: Colors.grey.shade300);
       },
-      errorBuilder: (context, error, stackTrace) => Container(color: Colors.grey.shade400),
+      errorBuilder: (_, _, _) =>
+          Container(color: Colors.grey.shade400),
     );
   }
 }

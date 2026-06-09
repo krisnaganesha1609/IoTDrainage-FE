@@ -9,7 +9,7 @@ class SensorProvider extends GetConnect {
   }
 
   Future<List<SensorModel>?> getLatest(String deviceId) async {
-    final response = await get('sensor/latest/$deviceId');
+    final response = await get('/sensor/latest/$deviceId');
     if (response.body is Map<String, dynamic>) {
       final data = response.body['data'] as List?;
       return data?.map((e) => SensorModel.fromJson(e)).toList();
