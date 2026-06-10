@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 
+import '../../../core/app_constants.dart';
 import '../../../data/models/sensor_model.dart';
 import '../../../data/providers/image_provider.dart';
 import '../../../data/providers/sensor_provider.dart';
@@ -12,8 +13,6 @@ class HomeController extends GetxController {
   final _imageProvider = Get.find<ImageProvider>();
   final _sensorProvider = Get.find<SensorProvider>();
   final _wsService = Get.find<WebSocketService>();
-
-  static const _deviceId = 'IOT-34CD98';
 
   final imageUrl = RxnString();
   final imageTimestamp = RxnString();
@@ -43,7 +42,7 @@ class HomeController extends GetxController {
 
   Future<void> fetchSensor() async {
     try {
-      final list = await _sensorProvider.getLatest(_deviceId);
+      final list = await _sensorProvider.getLatest(AppConstants.deviceId);
       if (list != null && list.isNotEmpty) {
         final latest = list.reduce(
           (a, b) =>

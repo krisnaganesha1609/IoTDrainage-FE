@@ -1,7 +1,15 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <uses-permission android:name="android.permission.INTERNET"/>
+    <!-- Required to display push notifications on Android 13+ (API 33). -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+    <!-- Allow notifications to vibrate the device. -->
+    <uses-permission android:name="android.permission.VIBRATE"/>
+    <!-- Wake the device to process incoming FCM messages. -->
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+    <!-- Allow FCM to deliver messages after device reboot. -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
     <application
-        android:label="iot_drainage"
+        android:label="IoTDrainage"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher"
         >
