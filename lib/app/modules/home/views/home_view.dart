@@ -47,10 +47,21 @@ class HomeView extends GetView<HomeController> {
                       SizedBox(
                         height: 198,
                         child: Row(
-                          children: const [
-                            Expanded(child: HeightCard(heightCm: 30)),
-                            SizedBox(width: 6),
-                            Expanded(child: WeatherCard()),
+                          children: [
+                            Expanded(
+                              child: Obx(() => HeightCard(
+                                    heightCm:
+                                        controller.waterLevelCm.value ?? 0,
+                                    status: controller.sensorStatus.value,
+                                  )),
+                            ),
+                            const SizedBox(width: 6),
+                            Expanded(
+                              child: Obx(() => WeatherCard(
+                                    rainDetected:
+                                        controller.rainDetected.value ?? false,
+                                  )),
+                            ),
                           ],
                         ),
                       ),

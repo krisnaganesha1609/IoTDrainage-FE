@@ -44,7 +44,7 @@ class StatusCard extends StatelessWidget {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      timestamp ?? '',
+                      timestamp ?? '-',
                       style: GoogleFonts.inter(
                         fontSize: 12,
                         fontWeight: FontWeight.w500,
