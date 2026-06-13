@@ -14,8 +14,15 @@ class HomeView extends GetView<HomeController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       body: Obx(() {
-        final isNormal = controller.sensorStatus.value == 'NORMAL' || controller.sensorStatus.value == null;
+        if (controller.sensorStatus.value == null) {
+          return const Center(
+            child: CircularProgressIndicator(color: Color(0xFF47B881)),
+          );
+        }
+
+        final isNormal = controller.sensorStatus.value == 'NORMAL' || controller.sensorStatus.value == 'WASPADA';
         final targetColor = isNormal ? const Color(0xFF47B881) : const Color(0xFFF64C4C);
 
         return TweenAnimationBuilder<Color?>(

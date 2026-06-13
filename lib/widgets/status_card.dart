@@ -9,7 +9,7 @@ class StatusCard extends StatelessWidget {
 
   const StatusCard({super.key, this.status, this.timestamp});
 
-  bool get _isNormal => status == null || status == 'NORMAL';
+  bool get _isNormal => status == "NORMAL" || status == 'WASPADA';
 
   @override
   Widget build(BuildContext context) {

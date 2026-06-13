@@ -14,7 +14,7 @@ class HeightCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isNormal = status == 'NORMAL' || status == null;
+    final isNormal = status == 'NORMAL' || status == "WASPADA";
 
     return Container(
       padding: const EdgeInsets.all(16),
